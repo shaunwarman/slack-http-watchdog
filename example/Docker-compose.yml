@@ -3,15 +3,24 @@ services:
   app:
     container_name: app
     build: ./app
-    network_mode: host
+    network_mode: 'host'
     ports:
       - 3000:3000
-  watchdog:
-    container_name: watchdog
+  watchdog1:
+    container_name: watchdog1
     build: ../
-    network_mode: host
+    network_mode: 'host'
     environment:
-      - WATCHDOG_HEALTHCHECK="http://localhost:3000/good"
+      - WATCHDOG_HEALTHCHECK=http://127.0.0.1:3000/good
+      - DEBUG=watchdog
+      - WATCHDOG_SLACK_CHANNEL
+      - WATCHDOG_SLACK_TOKEN
+  watchdog2:
+    container_name: watchdog2
+    build: ../
+    network_mode: 'host'
+    environment:
+      - WATCHDOG_HEALTHCHECK=http://127.0.0.1:3000/bad
       - DEBUG=watchdog
       - WATCHDOG_SLACK_CHANNEL
       - WATCHDOG_SLACK_TOKEN
