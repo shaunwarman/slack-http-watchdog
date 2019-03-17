@@ -1,0 +1,17 @@
+version: '2'
+services:
+  app:
+    container_name: app
+    build: ./app
+    network_mode: host
+    ports:
+      - 3000:3000
+  watchdog:
+    container_name: watchdog
+    build: ../
+    network_mode: host
+    environment:
+      - WATCHDOG_HEALTHCHECK="http://localhost:3000/good"
+      - DEBUG=watchdog
+      - WATCHDOG_SLACK_CHANNEL
+      - WATCHDOG_SLACK_TOKEN

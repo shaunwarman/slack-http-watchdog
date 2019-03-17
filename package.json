@@ -1,0 +1,19 @@
+{
+  "name": "slack-http-watchdog",
+  "version": "0.0.1",
+  "description": "An http watchdog configured to alert via slack",
+  "main": "index.js",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Shaun Warman",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^7.0.0",
+    "http-watchdog": "0.0.1-alpha.2",
+    "slackbots": "^1.2.0"
+  }
+}

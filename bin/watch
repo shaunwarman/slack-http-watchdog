@@ -1,0 +1,57 @@
+#!/usr/bin/env node
+
+const Slackbot = require('slackbots');
+const Watchdog = require('http-watchdog');
+const dotenv = require('dotenv');
+
+const { ENV_PATH } = process.env;
+if (ENV_PATH) {
+  dotenv({ path: ENV_PATH });
+}
+
+const {
+  WATCHDOG_DELAY = 0,
+  WATCHDOG_FAILURE_COUNT = 3,
+  WATCHDOG_INTERVAL = 5000,
+  WATCHDOG_HEALTHCHECK,
+  WATCHDOG_TIMEOUT = 1000
+} = process.env;
+
+if (!WATCHDOG_HEALTHCHECK) {
+  throw new Error(
+    '`WATCHDOG_HEALTHCHECK` must be configured!'
+  );
+}
+
+['WATCHDOG_SLACK_CHANNEL', 'WATCHDOG_SLACK_TOKEN'].forEach(env => {
+  if (!process.env[env]) {
+    throw new Error(`${env} must be configured!`);
+  }
+});
+
+const slackLogger = {
+  error(msg) {
+    const slackbot = new Slackbot({
+      name: 'watchdog',
+      token: process.env.WATCHDOG_SLACK_TOKEN
+    });
+    const params = { icon_emoji: ':warning:' };
+    slackbot.postMessage(process.env.WATCHDOG_SLACK_CHANNEL, msg, params);
+  }
+};
+
+const watchdog = new Watchdog({
+  delay: WATCHDOG_DELAY,
+  failureCount: WATCHDOG_FAILURE_COUNT,
+  logger: slackLogger,
+  interval: WATCHDOG_INTERVAL,
+  healthcheck: WATCHDOG_HEALTHCHECK,
+  timeout: WATCHDOG_TIMEOUT
+});
+
+watchdog.watch();
+
+process.on('SIGINT', () => {
+  console.warn('SIGINT: Shutting down watchdog.');
+  watchdog.stop();
+});
