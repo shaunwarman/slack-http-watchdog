@@ -1,6 +1,6 @@
-const Express = require('express');
+const express = require('express');
 
-const app = Express();
+const app = express();
 
 app.get('/good', (req, res) => {
   res.status(200).send('Ok');
